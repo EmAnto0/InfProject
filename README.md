@@ -35,9 +35,15 @@
 ```bash
 python src/main.py
 
-library_management/
-├── src/                 # Исходный код
-├── docs/               # Документация
-│   └── diagrams/       # Диаграммы PlantUML
-├── README.md           # Этот файл
-└── .gitignore          # Исключаемые файлы
+## Структура проекта
+
+InfProject/
+├── .gitignore
+├── README.md
+├── src/
+│   └── main.py
+└── docs/
+    ├── diagrams/
+    │   ├── class_diagram.puml
+    │   └── use_case.puml
+    └── images/
