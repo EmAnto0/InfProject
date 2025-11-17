@@ -37,6 +37,7 @@ python src/main.py
 ```
 
 ## Структура проекта
+```
 InfProject/
 ├── .gitignore
 ├── README.md
@@ -47,3 +48,6 @@ InfProject/
     │   ├── class_diagram.puml
     │   └── use_case.puml
     └── images/
+        ├── class_diagram.png
+        └── use_case.png
+```
