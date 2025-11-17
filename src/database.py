@@ -131,4 +131,21 @@ class Database:
 
 # Создаем базу данных при импорте
 db = Database()
-db.add_sample_data()
+
+# Только если база пустая - добавляем тестовые данные
+try:
+    conn = db.get_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT COUNT(*) FROM books")
+    book_count = cursor.fetchone()[0]
+    conn.close()
+    
+    if book_count == 0:
+        db.add_sample_data()
+        print("Тестовые данные добавлены в базу данных")
+    else:
+        print("База данных уже содержит данные")
+        
+except:
+    # Если таблиц нет - создаем и добавляем данные
+    db.add_sample_data()
