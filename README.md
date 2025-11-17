@@ -34,9 +34,9 @@
 ## Запуск проекта
 ```bash
 python src/main.py
+```
 
 ## Структура проекта
-
 InfProject/
 ├── .gitignore
 ├── README.md
