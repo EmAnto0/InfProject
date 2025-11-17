@@ -26,6 +26,14 @@
 - Управление читателями
 - Начисление штрафов
 
+## Блок-схемы процессов
+
+### Процесс выдачи книги
+![Блок-схема выдачи книги](docs/diagrams/reader_do.png)
+
+### Процесс добавления новой книги
+![Блок-схема добавления книги](librarian_do.png)
+
 ## Технологии
 - Python
 - Git & GitHub
@@ -45,11 +53,11 @@ InfProject/
 │   └── main.py
 └── docs/
     ├── diagrams/
-    │   ├── class_diagram.puml
-    │   └── use_case.puml
+    │   ├── reader_do.puml
+    │   └── librarian_do.puml
     └── images/
-        ├── class_diagram.png
-        └── use_case.png
+        ├── reader_do.png
+        └── librarian_do.png
 ```
 
 ## База данных
