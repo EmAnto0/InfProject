@@ -1,6 +1,8 @@
 @startuml er_diagram
 
-entity "Книги" as Book {
+skinparam linetype ortho
+
+entity "Book" as Book {
   * book_id : INTEGER <<PK>>
   --
   title : TEXT
@@ -11,59 +13,45 @@ entity "Книги" as Book {
   category : TEXT
 }
 
-entity "Экземпляры" as Copy {
-  * copy_id : INTEGER <<PK>>
-  * book_id : INTEGER <<FK>>
-  --
-  barcode : TEXT
-  status : TEXT
-  condition : TEXT
-}
-
-entity "Читатели" as Reader {
+entity "Reader" as Reader {
   * reader_id : INTEGER <<PK>>
   --
   name : TEXT
   card_number : TEXT
   contact : TEXT
-  status : TEXT
+  status : BOOLEAN
 }
 
-entity "Выдачи" as Loan {
-  * loan_id : INTEGER <<PK>>
-  * copy_id : INTEGER <<FK>>
-  * reader_id : INTEGER <<FK>>
+entity "Librarian" as Librarian {
+  * librarian_id : INTEGER <<PK>>
   --
-  issue_date : TEXT
-  due_date : TEXT
-  return_date : TEXT
-  status : TEXT
+  name : TEXT
+  password : TEXT
 }
 
-entity "Бронирования" as Reservation {
+entity "Reservation" as Reservation {
   * reservation_id : INTEGER <<PK>>
   * book_id : INTEGER <<FK>>
   * reader_id : INTEGER <<FK>>
+  * librarian_id : INTEGER <<FK>>
   --
   reservation_date : TEXT
-  status : TEXT
+  status : BOOLEAN
 }
 
-entity "Штрафы" as Fine {
+entity "Fine" as Fine {
   * fine_id : INTEGER <<PK>>
   * reader_id : INTEGER <<FK>>
   --
   amount : REAL
   reason : TEXT
-  status : TEXT
+  status : BOOLEAN
 }
 
 ' Связи между сущностями
-Book ||..o{ Copy : "имеет"
-Copy ||..o{ Loan : "выдан_в"
-Reader ||..o{ Loan : "берет"
-Reader ||..o{ Reservation : "создает"
-Book ||..o{ Reservation : "бронируется_в"
-Reader ||..o{ Fine : "имеет"
+Reader -u-|{ Reservation
+Book -u-|{ Reservation
+Librarian -u-|{ Reservation
+Reader -u-|{ Fine
 
 @enduml
