@@ -26,7 +26,7 @@
 - Управление читателями
 - Начисление штрафов
 
-![Use case диаграмма](docs\images\use_case.pngп)
+![Use case диаграмма](docs\images\use_case.png)
 
 ## Блок-схемы процессов
 
