@@ -1,18 +1,18 @@
 import sqlite3
+import os
 from datetime import datetime, timedelta
-import hashlib
 
 class Database:
     def __init__(self, db_name='library.db'):
         self.db_name = db_name
+        # Удаляем старую базу если она есть
+        if os.path.exists(db_name):
+            os.remove(db_name)
         self.create_tables()
         self.add_sample_data()
     
     def get_connection(self):
-        return sqlite3.connect(self.db_name)
-    
-    def hash_password(self, password):
-        return hashlib.sha256(password.encode()).hexdigest()
+        return sqlite3.connect(self.db_name)   
     
     def create_tables(self):
         conn = self.get_connection()
@@ -114,8 +114,8 @@ class Database:
             INSERT INTO librarians (name, username, password)
             VALUES (?, ?, ?)
         ''', [
-            ('Анна Петрова', 'librarian1', self.hash_password('12345')),
-            ('Иван Сидоров', 'librarian2', self.hash_password('54321'))
+            ('Анна Петрова', 'librarian1', '12345'),
+            ('Иван Сидоров', 'librarian2', '54321')
         ])
         
         # Добавляем читателей
@@ -123,9 +123,9 @@ class Database:
             INSERT INTO readers (name, card_number, contact, password, status)
             VALUES (?, ?, ?, ?, ?)
         ''', [
-            ('Иванов Иван', 'R001', 'ivanov@mail.ru', self.hash_password('pass1'), 1),
-            ('Петрова Мария', 'R002', 'petrova@mail.ru', self.hash_password('pass2'), 1),
-            ('Сидоров Алексей', 'R003', 'sidorov@mail.ru', self.hash_password('pass3'), 0)
+            ('Иванов Иван', 'R001', 'ivanov@mail.ru', 'pass1', 1),
+            ('Петрова Мария', 'R002', 'petrova@mail.ru', 'pass2', 1),
+            ('Сидоров Алексей', 'R003', 'sidorov@mail.ru', 'pass3', 0)
         ])
 
         # Добавляем книги
@@ -174,11 +174,13 @@ class Database:
         
         conn.commit()
         conn.close()
-        print("✅ Тестовые данные добавлены в базу данных")
+        print("Тестовые данные добавлены в базу данных")
 
 # Создаем глобальный объект базы данных
 db = Database()
 
+
+'''
 # Только если база пустая - добавляем тестовые данные
 try:
     conn = db.get_connection()
@@ -196,3 +198,5 @@ try:
 except:
     # Если таблиц нет - создаем и добавляем данные
     db.add_sample_data()
+
+'''

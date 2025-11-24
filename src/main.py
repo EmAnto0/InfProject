@@ -1,5 +1,5 @@
 # main.py
-from data_access import AuthDAO
+from data_access import AuthDAO, BookDAO, ReaderDAO
 from reader_interface import ReaderInterface
 from librarian_interface import LibrarianInterface
 import os
@@ -11,11 +11,11 @@ def main():
     while True:
         clear_screen()
         print("=" * 50)
-        print("📚 СИСТЕМА УЧЁТА КНИГ В БИБЛИОТЕКЕ")
+        print("СИСТЕМА УЧЕТА КНИГ В БИБЛИОТЕКЕ")
         print("=" * 50)
-        print("\n1. 👤 Вход для читателя")
-        print("2. 👨‍💼 Вход для библиотекаря") 
-        print("3. 🚪 Выход")
+        print("\n1. Вход для читателя")
+        print("2. Вход для библиотекаря") 
+        print("3. Выход")
         
         choice = input("\nВыберите тип входа (1-3): ").strip()
         
@@ -24,7 +24,7 @@ def main():
         elif choice == '2':
             librarian_login()
         elif choice == '3':
-            print("\n👋 До свидания!")
+            print("\nДо свидания!")
             break
         else:
             print("❌ Неверный выбор!")

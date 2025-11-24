@@ -1,5 +1,5 @@
 # reader_interface.py
-from data_access import AuthDAO, BookDAO, ReaderDAO, LoanDAO, ReservationDAO
+from data_access import BookDAO, ReaderDAO, ReservationDAO
 import os
 
 class ReaderInterface:
@@ -12,18 +12,18 @@ class ReaderInterface:
     
     def display_header(self):
         print("=" * 50)
-        print(f"📚 БИБЛИОТЕЧНАЯ СИСТЕМА - ЧИТАТЕЛЬ")
-        print(f"👤 {self.reader.name} (Карта: {self.reader.card_number})")
+        print(f"БИБЛИОТЕЧНАЯ СИСТЕМА - ЧИТАТЕЛЬ")
+        print(f"{self.reader.name} (Карта: {self.reader.card_number})")
         print("=" * 50)
     
     def show_menu(self):
-        print("\n📋 МЕНЮ ЧИТАТЕЛЯ:")
-        print("1. 🔍 Поиск книг")
-        print("2. 📚 Просмотреть все книги") 
-        print("3. 📖 Мои текущие выдачи")
-        print("4. 📅 Мои бронирования")
-        print("5. 💰 Мои штрафы")
-        print("6. 🚪 Выйти")
+        print("\nМЕНЮ ЧИТАТЕЛЯ:")
+        print("1. Поиск книг")
+        print("2. Просмотреть все книги") 
+        print("3. Мои текущие выдачи")
+        print("4. Мои бронирования")
+        print("5. Мои штрафы")
+        print("6. Выйти")
     
     def search_books(self):
         self.clear_screen()
@@ -40,14 +40,15 @@ class ReaderInterface:
             print("❌ Книги не найдены!")
             return
         
-        print(f"\n📚 Найдено книг: {len(books)}")
+        print(f"\nНайдено книг: {len(books)}")
         for i, book in enumerate(books, 1):
-            print(f"{i}. {book}")
+            status = "Доступна" if book.available_copies > 0 else "Нет в наличии"
+            print(f"{i}. {book.title} - {book.author} | {status}")
     
     def show_all_books(self):
         self.clear_screen()
         self.display_header()
-        print("\n📚 ВСЕ КНИГИ В БИБЛИОТЕКЕ")
+        print("\nВСЕ КНИГИ В БИБЛИОТЕКЕ")
         
         books = BookDAO.get_all_books()
         if not books:
