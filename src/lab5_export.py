@@ -4,12 +4,24 @@ import csv
 import xml.etree.ElementTree as ET
 import yaml
 import os
-from data_access import BookDAO, ReaderDAO
+from data_access import BookDAO, ReaderDAO, LoanDAO, ReservationDAO, FineDAO
 
 def create_output_folder():
+    """Создает папку out, если её нет"""
     if not os.path.exists('out'):
         os.makedirs('out')
-
+        print("✅ Папка 'out' создана")
+    else:
+        # Очищаем папку от старых файлов
+        for file in os.listdir('out'):
+            file_path = os.path.join('out', file)
+            try:
+                if os.path.isfile(file_path):
+                    os.remove(file_path)
+            except Exception as e:
+                print(f"⚠️  Не удалось удалить {file_path}: {e}")
+        print("✅ Папка 'out' очищена")
+        
 def export_library_data():
     print("📊 Экспорт данных библиотеки...")
     
