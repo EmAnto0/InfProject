@@ -1,6 +1,6 @@
 from database import db
 from models import Reader, Librarian, Book, Loan, Reservation, Fine
-from datetime import datetime
+from datetime import datetime, timedelta
 
 class AuthDAO:
     @staticmethod
@@ -105,6 +105,15 @@ class BookDAO:
 
 class ReaderDAO:
     @staticmethod
+    def get_all_readers():
+        conn = db.get_connection()
+        cursor = conn.cursor()
+        cursor.execute('SELECT * FROM readers')
+        readers = [Reader(*row) for row in cursor.fetchall()]
+        conn.close()
+        return readers
+
+    @staticmethod
     def get_reader_by_id(reader_id):
         conn = db.get_connection()
         cursor = conn.cursor()
@@ -159,6 +168,16 @@ class ReaderDAO:
         fines = [Fine(*row) for row in cursor.fetchall()]
         conn.close()
         return fines
+
+class LibrarianDAO:
+    @staticmethod
+    def get_all_librarians():
+        conn = db.get_connection()
+        cursor = conn.cursor()
+        cursor.execute('SELECT * FROM librarians')
+        librarians = [Librarian(*row) for row in cursor.fetchall()]
+        conn.close()
+        return librarians
 
 class LoanDAO:
     @staticmethod
