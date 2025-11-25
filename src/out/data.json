@@ -1,0 +1,157 @@
+{
+  "library_info": {
+    "name": "Библиотечная система",
+    "export_date": "2025-11-25 12:34:37",
+    "total_records": 14
+  },
+  "books": [
+    {
+      "book_id": 1,
+      "title": "Война и мир",
+      "author": "Л.Н. Толстой",
+      "isbn": "978-5-389-00001-1",
+      "year": 1869,
+      "publisher": "АСТ",
+      "genre": "Роман",
+      "description": "Великий роман о войне 1812 года",
+      "total_copies": 5,
+      "available_copies": 3
+    },
+    {
+      "book_id": 4,
+      "title": "Евгений Онегин",
+      "author": "А.С. Пушкин",
+      "isbn": "978-5-389-00004-2",
+      "year": 1833,
+      "publisher": "АСТ",
+      "genre": "Поэзия",
+      "description": "Роман в стихах о любви и судьбе",
+      "total_copies": 2,
+      "available_copies": 1
+    },
+    {
+      "book_id": 3,
+      "title": "Мастер и Маргарита",
+      "author": "М.А. Булгаков",
+      "isbn": "978-5-389-00003-5",
+      "year": 1967,
+      "publisher": "Азбука",
+      "genre": "Фантастика",
+      "description": "Мистический роман о дьяволе в Москве",
+      "total_copies": 4,
+      "available_copies": 4
+    },
+    {
+      "book_id": 5,
+      "title": "Отцы и дети",
+      "author": "И.С. Тургенев",
+      "isbn": "978-5-389-00005-9",
+      "year": 1862,
+      "publisher": "Эксмо",
+      "genre": "Роман",
+      "description": "Роман о конфликте поколений",
+      "total_copies": 3,
+      "available_copies": 3
+    },
+    {
+      "book_id": 2,
+      "title": "Преступление и наказание",
+      "author": "Ф.М. Достоевский",
+      "isbn": "978-5-389-00002-8",
+      "year": 1866,
+      "publisher": "Эксмо",
+      "genre": "Роман",
+      "description": "Психологический роман о преступлении и его последствиях",
+      "total_copies": 3,
+      "available_copies": 2
+    }
+  ],
+  "readers": [
+    {
+      "reader_id": 1,
+      "name": "Иванов Иван",
+      "card_number": "R001",
+      "contact": "ivanov@mail.ru",
+      "password": "pass1",
+      "status": 1
+    },
+    {
+      "reader_id": 2,
+      "name": "Петрова Мария",
+      "card_number": "R002",
+      "contact": "petrova@mail.ru",
+      "password": "pass2",
+      "status": 1
+    },
+    {
+      "reader_id": 3,
+      "name": "Сидоров Алексей",
+      "card_number": "R003",
+      "contact": "sidorov@mail.ru",
+      "password": "pass3",
+      "status": 0
+    }
+  ],
+  "loans": [
+    {
+      "loan_id": 1,
+      "book_id": 1,
+      "reader_id": 1,
+      "issue_date": "2024-01-10",
+      "due_date": "2024-02-10",
+      "return_date": null,
+      "status": "active",
+      "book_title": "Война и мир",
+      "reader_name": "Иванов Иван"
+    },
+    {
+      "loan_id": 2,
+      "book_id": 2,
+      "reader_id": 2,
+      "issue_date": "2024-01-12",
+      "due_date": "2024-02-12",
+      "return_date": null,
+      "status": "active",
+      "book_title": "Преступление и наказание",
+      "reader_name": "Петрова Мария"
+    }
+  ],
+  "reservations": [
+    {
+      "reservation_id": 1,
+      "book_id": 3,
+      "reader_id": 1,
+      "reservation_date": "2024-01-15",
+      "status": "active",
+      "book_title": "Мастер и Маргарита",
+      "reader_name": "Иванов Иван"
+    },
+    {
+      "reservation_id": 2,
+      "book_id": 4,
+      "reader_id": 2,
+      "reservation_date": "2024-01-16",
+      "status": "active",
+      "book_title": "Евгений Онегин",
+      "reader_name": "Петрова Мария"
+    }
+  ],
+  "fines": [
+    {
+      "fine_id": 1,
+      "reader_id": 2,
+      "amount": 150.5,
+      "reason": "Просрочка возврата книги",
+      "status": "unpaid",
+      "reader_name": "Петрова Мария"
+    },
+    {
+      "fine_id": 2,
+      "reader_id": 3,
+      "amount": 300.0,
+      "reason": "Потеря книги",
+      "status": "paid",
+      "reader_name": "Сидоров Алексей"
+    }
+  ]
+}

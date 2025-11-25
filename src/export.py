@@ -2,47 +2,40 @@
 import json
 import csv
 import xml.etree.ElementTree as ET
+import yaml
 import os
 import sys
+from datetime import datetime
 
-# Добавляем путь к модулям
+# Добавляем путь к модулям для надежности
 sys.path.append(os.path.dirname(__file__))
 
 from data_access import BookDAO, ReaderDAO, LoanDAO, ReservationDAO, FineDAO
 
-# Проверяем доступность YAML с подробной диагностикой
-try:
-    import yaml
-    YAML_AVAILABLE = True
-    YAML_VERSION = getattr(yaml, '__version__', 'unknown')
-    print(f"✅ PyYAML доступен (версия: {YAML_VERSION})")
-except ImportError as e:
-    print(f"❌ PyYAML не установлен: {e}")
-    print("💡 Установите: python -m pip install PyYAML==6.0.1")
-    YAML_AVAILABLE = False
-except Exception as e:
-    print(f"⚠️  Неожиданная ошибка при импорте YAML: {e}")
-    YAML_AVAILABLE = False
-
 def create_output_folder():
-    """Создает папку out, если её нет"""
-    if not os.path.exists('out'):
-        os.makedirs('out')
-        print("✅ Папка 'out' создана")
+    """Создает папку out в той же директории где находится скрипт"""
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    out_dir = os.path.join(script_dir, 'out')
+    
+    if not os.path.exists(out_dir):
+        os.makedirs(out_dir)
+        print(f"Папка 'out' создана: {out_dir}")
     else:
         # Очищаем папку от старых файлов
-        for file in os.listdir('out'):
-            file_path = os.path.join('out', file)
+        for file in os.listdir(out_dir):
+            file_path = os.path.join(out_dir, file)
             try:
                 if os.path.isfile(file_path):
                     os.remove(file_path)
             except Exception as e:
-                print(f"⚠️  Не удалось удалить {file_path}: {e}")
-        print("✅ Папка 'out' очищена")
+                print(f"Не удалось удалить {file_path}: {e}")
+        print(f"Папка 'out' очищена: {out_dir}")
+    
+    return out_dir
 
 def get_all_library_data():
     """Собирает все данные из библиотеки"""
-    print("📥 Сбор данных из базы...")
+    print("Сбор данных из базы...")
     
     try:
         books = BookDAO.get_all_books()
@@ -51,72 +44,49 @@ def get_all_library_data():
         reservations = ReservationDAO.get_all_reservations()
         fines = FineDAO.get_all_fines()
         
-        # Функция для очистки данных
-        def clean_data(obj):
-            if hasattr(obj, '__dict__'):
-                # Если это объект, берем его __dict__
-                data = obj.__dict__.copy()
-            else:
-                data = obj.copy() if isinstance(obj, dict) else obj
-                
-            # Удаляем приватные атрибуты (начинающиеся с _)
-            if isinstance(data, dict):
-                data = {k: v for k, v in data.items() if not k.startswith('_')}
-                # Рекурсивно очищаем вложенные данные
-                for key, value in data.items():
-                    if isinstance(value, (dict, list)):
-                        data[key] = clean_data(value)
-            elif isinstance(data, list):
-                data = [clean_data(item) for item in data]
-                
-            return data
-        
+        # Подготавливаем данные для экспорта
         data = {
             'library_info': {
                 'name': 'Библиотечная система',
-                'export_date': str(os.path.getctime('library.db')),
+                'export_date': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
                 'total_records': len(books) + len(readers) + len(loans) + len(reservations) + len(fines)
             },
-            'books': [clean_data(book) for book in books],
-            'readers': [clean_data(reader) for reader in readers],
-            'loans': [clean_data(loan) for loan in loans],
-            'reservations': [clean_data(reservation) for reservation in reservations],
-            'fines': [clean_data(fine) for fine in fines]
+            'books': [book.__dict__ for book in books],
+            'readers': [reader.__dict__ for reader in readers],
+            'loans': [loan.__dict__ for loan in loans],
+            'reservations': [reservation.__dict__ for reservation in reservations],
+            'fines': [fine.__dict__ for fine in fines]
         }
         
-        print(f"✅ Собрано данных:")
-        print(f"   📚 Книги: {len(books)}")
-        print(f"   👥 Читатели: {len(readers)}")
-        print(f"   📖 Активные выдачи: {len(loans)}")
-        print(f"   📅 Бронирования: {len(reservations)}")
-        print(f"   💰 Штрафы: {len(fines)}")
+        print(f"Собрано данных:")
+        print(f"  Книги: {len(books)}")
+        print(f"  Читатели: {len(readers)}")
+        print(f"  Активные выдачи: {len(loans)}")
+        print(f"  Бронирования: {len(reservations)}")
+        print(f"  Штрафы: {len(fines)}")
         
         return data
         
     except Exception as e:
-        print(f"❌ Ошибка при сборе данных: {e}")
-        import traceback
-        traceback.print_exc()
+        print(f"Ошибка при сборе данных: {e}")
         return {}
 
 def save_to_json(data, filename):
     """Сохраняет данные в формате JSON"""
     try:
         with open(filename, 'w', encoding='utf-8') as f:
-            json.dump(data, f, ensure_ascii=False, indent=2, default=str)
-        print(f"✅ JSON создан: {filename}")
+            json.dump(data, f, ensure_ascii=False, indent=2)
+        print(f"JSON создан: {filename}")
         return True
     except Exception as e:
-        print(f"❌ Ошибка при сохранении JSON: {e}")
+        print(f"Ошибка при сохранении JSON: {e}")
         return False
 
 def save_to_csv(data, filename):
     """Сохраняет данные в формате CSV"""
     try:
         with open(filename, 'w', newline='', encoding='utf-8') as f:
-            writer = csv.writer(f, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
-            
-            # Основная таблица
+            writer = csv.writer(f)
             writer.writerow(['Тип', 'ID', 'Название/Имя', 'Автор/Контакты', 'Год', 'Доступно', 'Статус'])
             
             # Книги
@@ -144,10 +114,10 @@ def save_to_csv(data, filename):
                     status
                 ])
                 
-        print(f"✅ CSV создан: {filename}")
+        print(f"CSV создан: {filename}")
         return True
     except Exception as e:
-        print(f"❌ Ошибка при сохранении CSV: {e}")
+        print(f"Ошибка при сохранении CSV: {e}")
         return False
 
 def save_to_xml(data, filename):
@@ -159,14 +129,15 @@ def save_to_xml(data, filename):
         info_elem = ET.SubElement(root, 'info')
         ET.SubElement(info_elem, 'name').text = data.get('library_info', {}).get('name', 'Библиотека')
         ET.SubElement(info_elem, 'export_date').text = data.get('library_info', {}).get('export_date', '')
+        ET.SubElement(info_elem, 'total_records').text = str(data.get('library_info', {}).get('total_records', 0))
         
         # Книги
         books_elem = ET.SubElement(root, 'books')
         for book in data.get('books', []):
             book_elem = ET.SubElement(books_elem, 'book')
             for key, value in book.items():
-                if value is not None and key != 'library_info':
-                    elem = ET.SubElement(book_elem, key.replace(' ', '_'))
+                if value is not None:
+                    elem = ET.SubElement(book_elem, key)
                     elem.text = str(value)
         
         # Читатели
@@ -175,7 +146,7 @@ def save_to_xml(data, filename):
             reader_elem = ET.SubElement(readers_elem, 'reader')
             for key, value in reader.items():
                 if value is not None:
-                    elem = ET.SubElement(reader_elem, key.replace(' ', '_'))
+                    elem = ET.SubElement(reader_elem, key)
                     elem.text = str(value)
         
         tree = ET.ElementTree(root)
@@ -185,101 +156,90 @@ def save_to_xml(data, filename):
             f.write('<?xml version="1.0" encoding="UTF-8"?>\n'.encode('utf-8'))
             tree.write(f, encoding='utf-8', xml_declaration=False)
             
-        print(f"✅ XML создан: {filename}")
+        print(f"XML создан: {filename}")
         return True
     except Exception as e:
-        print(f"❌ Ошибка при сохранении XML: {e}")
+        print(f"Ошибка при сохранении XML: {e}")
         return False
 
 def save_to_yaml(data, filename):
     """Сохраняет данные в формате YAML"""
-    if not YAML_AVAILABLE:
-        print("❌ YAML недоступен. Пропускаем создание YAML файла.")
-        return False
-        
     try:
-        # Дополнительная очистка данных для YAML
-        def yaml_safe_data(obj):
+        # Очищаем данные от None значений для YAML
+        def clean_for_yaml(obj):
             if isinstance(obj, dict):
-                return {k: yaml_safe_data(v) for k, v in obj.items() 
-                       if v is not None and not k.startswith('_')}
+                return {k: clean_for_yaml(v) for k, v in obj.items() if v is not None}
             elif isinstance(obj, list):
-                return [yaml_safe_data(item) for item in obj]
-            elif isinstance(obj, (int, float, str, bool)):
-                return obj
+                return [clean_for_yaml(item) for item in obj]
             else:
-                return str(obj)
+                return obj
         
-        safe_data = yaml_safe_data(data)
+        cleaned_data = clean_for_yaml(data)
         
         with open(filename, 'w', encoding='utf-8') as f:
-            yaml.dump(safe_data, f, allow_unicode=True, default_flow_style=False, sort_keys=False)
+            yaml.dump(cleaned_data, f, allow_unicode=True, default_flow_style=False)
         
-        print(f"✅ YAML создан: {filename}")
+        print(f"YAML создан: {filename}")
         return True
         
     except Exception as e:
-        print(f"❌ Ошибка при сохранении YAML: {e}")
-        print("💡 Попробуйте: python -m pip install --upgrade PyYAML")
+        print(f"Ошибка при сохранении YAML: {e}")
         return False
 
 def main():
     """Основная функция экспорта"""
-    print("=" * 60)
-    print("📊 ЛАБОРАТОРНАЯ РАБОТА №5 - ЭКСПОРТ ДАННЫХ")
-    print("=" * 60)
+    print("=" * 50)
+    print("ЛАБОРАТОРНАЯ РАБОТА №5 - ЭКСПОРТ ДАННЫХ")
+    print("=" * 50)
     
     # Проверяем доступность базы данных
     if not os.path.exists('library.db'):
-        print("❌ База данных 'library.db' не найдена!")
-        print("💡 Запустите main.py сначала чтобы создать базу данных")
+        print("База данных 'library.db' не найдена!")
+        print("Запустите main.py сначала чтобы создать базу данных")
         return
     
-    # Создаем папку
-    create_output_folder()
+    # Создаем папку для результатов
+    out_dir = create_output_folder()
     
     # Получаем данные
     library_data = get_all_library_data()
     
     if not library_data:
-        print("❌ Нет данных для экспорта!")
+        print("Нет данных для экспорта!")
         return
     
     # Экспортируем в разные форматы
-    print("\n💾 Начинаем экспорт данных...")
+    print("\nНачинаем экспорт данных...")
     
+    # Создаем файлы во всех форматах
     results = {
-        'JSON': save_to_json(library_data, 'out/data.json'),
-        'CSV': save_to_csv(library_data, 'out/data.csv'),
-        'XML': save_to_xml(library_data, 'out/data.xml'),
-        'YAML': save_to_yaml(library_data, 'out/data.yaml')
+        'JSON': save_to_json(library_data, os.path.join(out_dir, 'data.json')),
+        'CSV': save_to_csv(library_data, os.path.join(out_dir, 'data.csv')),
+        'XML': save_to_xml(library_data, os.path.join(out_dir, 'data.xml')),
+        'YAML': save_to_yaml(library_data, os.path.join(out_dir, 'data.yaml'))
     }
     
     # Итоги
-    print("\n" + "=" * 60)
-    print("🎉 ЭКСПОРТ ЗАВЕРШЕН!")
-    print("=" * 60)
+    print("\n" + "=" * 50)
+    print("ЭКСПОРТ ЗАВЕРШЕН!")
+    print("=" * 50)
     
     successful = sum(results.values())
     total = len(results)
     
-    print(f"📈 Результаты: {successful}/{total} форматов создано успешно")
+    print(f"Результаты: {successful}/{total} форматов создано успешно")
     
-    print("\n📁 Созданные файлы в папке 'out/':")
+    print("\nСозданные файлы:")
     print("-" * 40)
     
-    files = os.listdir('out')
+    files = os.listdir(out_dir)
     for file in sorted(files):
-        file_path = os.path.join('out', file)
+        file_path = os.path.join(out_dir, file)
         file_size = os.path.getsize(file_path)
-        status = "✅" if file_size > 0 else "❌"
-        print(f"   {status} {file} ({file_size} байт)")
+        print(f"  {file} ({file_size} байт)")
     
-    if not results['YAML']:
-        print("\n⚠️  YAML файл не создан")
-        print("   Проверьте установку PyYAML: python -m pip install PyYAML==6.0.1")
-    
-    print("=" * 60)
+    print(f"\nВсе файлы сохранены в: {out_dir}")
+    print("=" * 50)
 
 if __name__ == "__main__":
     main()

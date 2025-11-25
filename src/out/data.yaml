@@ -1,0 +1,119 @@
+books:
+- author: Л.Н. Толстой
+  available_copies: 3
+  book_id: 1
+  description: Великий роман о войне 1812 года
+  genre: Роман
+  isbn: 978-5-389-00001-1
+  publisher: АСТ
+  title: Война и мир
+  total_copies: 5
+  year: 1869
+- author: А.С. Пушкин
+  available_copies: 1
+  book_id: 4
+  description: Роман в стихах о любви и судьбе
+  genre: Поэзия
+  isbn: 978-5-389-00004-2
+  publisher: АСТ
+  title: Евгений Онегин
+  total_copies: 2
+  year: 1833
+- author: М.А. Булгаков
+  available_copies: 4
+  book_id: 3
+  description: Мистический роман о дьяволе в Москве
+  genre: Фантастика
+  isbn: 978-5-389-00003-5
+  publisher: Азбука
+  title: Мастер и Маргарита
+  total_copies: 4
+  year: 1967
+- author: И.С. Тургенев
+  available_copies: 3
+  book_id: 5
+  description: Роман о конфликте поколений
+  genre: Роман
+  isbn: 978-5-389-00005-9
+  publisher: Эксмо
+  title: Отцы и дети
+  total_copies: 3
+  year: 1862
+- author: Ф.М. Достоевский
+  available_copies: 2
+  book_id: 2
+  description: Психологический роман о преступлении и его последствиях
+  genre: Роман
+  isbn: 978-5-389-00002-8
+  publisher: Эксмо
+  title: Преступление и наказание
+  total_copies: 3
+  year: 1866
+fines:
+- amount: 150.5
+  fine_id: 1
+  reader_id: 2
+  reader_name: Петрова Мария
+  reason: Просрочка возврата книги
+  status: unpaid
+- amount: 300.0
+  fine_id: 2
+  reader_id: 3
+  reader_name: Сидоров Алексей
+  reason: Потеря книги
+  status: paid
+library_info:
+  export_date: '2025-11-25 12:34:37'
+  name: Библиотечная система
+  total_records: 14
+loans:
+- book_id: 1
+  book_title: Война и мир
+  due_date: '2024-02-10'
+  issue_date: '2024-01-10'
+  loan_id: 1
+  reader_id: 1
+  reader_name: Иванов Иван
+  status: active
+- book_id: 2
+  book_title: Преступление и наказание
+  due_date: '2024-02-12'
+  issue_date: '2024-01-12'
+  loan_id: 2
+  reader_id: 2
+  reader_name: Петрова Мария
+  status: active
+readers:
+- card_number: R001
+  contact: ivanov@mail.ru
+  name: Иванов Иван
+  password: pass1
+  reader_id: 1
+  status: 1
+- card_number: R002
+  contact: petrova@mail.ru
+  name: Петрова Мария
+  password: pass2
+  reader_id: 2
+  status: 1
+- card_number: R003
+  contact: sidorov@mail.ru
+  name: Сидоров Алексей
+  password: pass3
+  reader_id: 3
+  status: 0
+reservations:
+- book_id: 3
+  book_title: Мастер и Маргарита
+  reader_id: 1
+  reader_name: Иванов Иван
+  reservation_date: '2024-01-15'
+  reservation_id: 1
+  status: active
+- book_id: 4
+  book_title: Евгений Онегин
+  reader_id: 2
+  reader_name: Петрова Мария
+  reservation_date: '2024-01-16'
+  reservation_id: 2
+  status: active
