@@ -13,9 +13,11 @@ sys.path.append(os.path.dirname(__file__))
 from data_access import BookDAO, ReaderDAO, LoanDAO, ReservationDAO, FineDAO
 
 def create_output_folder():
-    """Создает папку out в той же директории где находится скрипт"""
+    """Создает папку out в корне проекта"""
+    # Поднимаемся на уровень выше из папки src
     script_dir = os.path.dirname(os.path.abspath(__file__))
-    out_dir = os.path.join(script_dir, 'out')
+    project_root = os.path.dirname(script_dir)  # Поднимаемся из src в корень
+    out_dir = os.path.join(project_root, 'out')
     
     if not os.path.exists(out_dir):
         os.makedirs(out_dir)
@@ -198,7 +200,7 @@ def main():
         print("Запустите main.py сначала чтобы создать базу данных")
         return
     
-    # Создаем папку для результатов
+    # Создаем папку для результатов в корне проекта
     out_dir = create_output_folder()
     
     # Получаем данные

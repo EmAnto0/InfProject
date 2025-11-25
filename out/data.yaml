@@ -63,7 +63,7 @@ fines:
   reason: Потеря книги
   status: paid
 library_info:
-  export_date: '2025-11-25 12:34:37'
+  export_date: '2025-11-25 12:42:47'
   name: Библиотечная система
   total_records: 14
 loans:
