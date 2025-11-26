@@ -168,6 +168,66 @@ class ReaderDAO:
         fines = [Fine(*row) for row in cursor.fetchall()]
         conn.close()
         return fines
+    
+    @staticmethod
+    def reserve_book(book_id, reader_id):
+        """Бронирует книгу для читателя"""
+        conn = db.get_connection()
+        cursor = conn.cursor()
+        
+        try:
+            # Проверяем, доступна ли книга для бронирования
+            cursor.execute('SELECT available_copies FROM books WHERE book_id = ?', (book_id,))
+            book = cursor.fetchone()
+            
+            if not book:
+                return False, "Книга не найдена"
+            
+            available_copies = book[0]
+            if available_copies <= 0:
+                return False, "Нет доступных экземпляров для бронирования"
+            
+            # Проверяем, не забронировал ли уже читатель эту книгу
+            cursor.execute('''
+                SELECT * FROM reservations 
+                WHERE book_id = ? AND reader_id = ? AND status = "active"
+            ''', (book_id, reader_id))
+            existing_reservation = cursor.fetchone()
+            
+            if existing_reservation:
+                return False, "Вы уже забронировали эту книгу"
+            
+            # Создаем бронирование
+            reservation_date = datetime.now().strftime('%Y-%m-%d')
+            cursor.execute('''
+                INSERT INTO reservations (book_id, reader_id, reservation_date, status)
+                VALUES (?, ?, ?, "active")
+            ''', (book_id, reader_id, reservation_date))
+            
+            conn.commit()
+            return True, "Книга успешно забронирована"
+            
+        except Exception as e:
+            conn.rollback()
+            return False, f"Ошибка при бронировании: {e}"
+        finally:
+            conn.close()
+
+    @staticmethod
+    def has_unpaid_fines(reader_id):
+        """Проверяет, есть ли у читателя неоплаченные штрафы"""
+        conn = db.get_connection()
+        cursor = conn.cursor()
+        
+        cursor.execute('''
+            SELECT COUNT(*) FROM fines 
+            WHERE reader_id = ? AND status = "unpaid"
+        ''', (reader_id,))
+        
+        count = cursor.fetchone()[0]
+        conn.close()
+        
+        return count > 0
 
 class LibrarianDAO:
     @staticmethod

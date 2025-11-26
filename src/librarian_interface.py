@@ -28,7 +28,7 @@ class LibrarianInterface:
         print("6. Управление бронированиями")
         print("7. Просмотреть штрафы")
         print("8. Статистика")
-        print("9. Выйти")
+        print("0. Выйти")
     
     def add_new_book(self):
         self.clear_screen()
@@ -244,7 +244,7 @@ class LibrarianInterface:
             self.display_header()
             self.show_menu()
             
-            choice = input("\nВыберите действие (1-9): ").strip()
+            choice = input("\nВыберите действие или нажмите Enter для выхода: ").strip()
             
             if choice == '1':
                 self.add_new_book()
@@ -262,7 +262,7 @@ class LibrarianInterface:
                 self.show_all_fines()
             elif choice == '8':
                 self.show_statistics()
-            elif choice == '9':
+            elif choice == '0' or choice == '':
                 print("\nДо свидания!")
                 break
             else:
