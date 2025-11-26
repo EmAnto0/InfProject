@@ -57,7 +57,7 @@ class ReaderInterface:
         
         if show_reserve_option and books:
             choice = input("Хотите забронировать книгу? (введите номер книги или 0 для отмены): ").strip()
-            if choice != '0':
+            if choice != '0' and choice != '':
                 try:
                     book_index = int(choice) - 1
                     if 0 <= book_index < len(books):
@@ -100,7 +100,7 @@ class ReaderInterface:
             print("Бронирование книг недоступно до полной оплаты задолженностей.")
             
             choice = input("\nХотите просмотреть информацию о задолженностях? (да/нет): ").strip().lower()
-            if choice in ['да', 'д', 'y', 'yes']:
+            if choice in ['да', 'д', 'y', 'yes', '1']:
                 self.show_my_fines()
             else:
                 print("Обратитесь к библиотекарю для решения вопроса.")
@@ -190,9 +190,11 @@ class ReaderInterface:
         if reservations:
             choice = input("\nОтменить бронирование? (введите номер или 0 для отмены): ")
             if choice.isdigit() and 1 <= int(choice) <= len(reservations):
-                reservation_id = reservations[int(choice)-1].reservation_id
-                if ReservationDAO.cancel_reservation(reservation_id):
-                    print("Бронирование отменено!")
+                confirm = input("Подтвердить отмену бронирования? (да/нет): ").strip().lower()
+                if confirm in ['1', 'да', 'д', 'y', 'yes']:
+                    reservation_id = reservations[int(choice)-1].reservation_id
+                    if ReservationDAO.cancel_reservation(reservation_id):
+                        print("Бронирование отменено!")
     
     def show_my_fines(self):
         self.clear_screen()
@@ -204,20 +206,30 @@ class ReaderInterface:
             print("У вас нет штрафов")
             return
         
-        total_unpaid = sum(fine.amount for fine in fines if fine.status == 'unpaid')
+        unpaid_fines = [f for f in fines if f.status == 'unpaid']
+        total_unpaid = sum(fine.amount for fine in unpaid_fines)
         
         print(f"\nОбщая сумма неоплаченных штрафов: {total_unpaid} руб.")
-        print("\nДетализация штрафов:")
-        for i, fine in enumerate(fines, 1):
-            status_str = "ОПЛАЧЕН" if fine.status == 'paid' else "НЕ ОПЛАЧЕН"
-            print(f"{i}. Сумма: {fine.amount} руб.")
-            print(f"   Причина: {fine.reason}")
-            print(f"   Статус: {status_str}")
-            print()
+        print(f"Количество неоплаченных штрафов: {len(unpaid_fines)}")
+    
+        if unpaid_fines:
+            print("\nНЕОПЛАЧЕННЫЕ ШТРАФЫ:")
+            for i, fine in enumerate(unpaid_fines, 1):
+                print(f"{i}. Сумма: {fine.amount} руб.")
+                print(f"   Причина: {fine.reason}")
+                print()
         
-        if total_unpaid > 0:
-            print("Для разблокировки аккаунта необходимо оплатить все штрафы.")
-            print("Обратитесь к библиотекарю.")
+        paid_fines = [f for f in fines if f.status == 'paid']
+        if paid_fines:
+            print("\nОПЛАЧЕННЫЕ ШТРАФЫ (история):")
+            for i, fine in enumerate(paid_fines, 1):
+                print(f"{i}. Сумма: {fine.amount} руб.")
+                print(f"   Причина: {fine.reason}")
+                print()
+            
+            if total_unpaid > 0:
+                print("Для разблокировки аккаунта необходимо оплатить все штрафы.")
+                print("Обратитесь к библиотекарю.")
 
     def run(self):
         while True:

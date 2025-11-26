@@ -228,6 +228,31 @@ class ReaderDAO:
         conn.close()
         
         return count > 0
+    
+    @staticmethod
+    def update_reader_status(reader_id, new_status):
+        """Обновляет статус читателя и синхронизирует штрафы"""
+        conn = db.get_connection()
+        cursor = conn.cursor()
+        
+        try:
+            # Обновляем статус читателя
+            cursor.execute('UPDATE readers SET status = ? WHERE reader_id = ?', 
+                          (new_status, reader_id))
+            
+            # Если статус становится "активен", помечаем все штрафы как оплаченные
+            if new_status:
+                cursor.execute('UPDATE fines SET status = "paid" WHERE reader_id = ?', 
+                              (reader_id,))
+            
+            conn.commit()
+            return True, "Статус читателя обновлен"
+            
+        except Exception as e:
+            conn.rollback()
+            return False, f"Ошибка при обновлении статуса: {e}"
+        finally:
+            conn.close()
 
 class LibrarianDAO:
     @staticmethod
@@ -346,3 +371,60 @@ class FineDAO:
             fines.append(fine)
         conn.close()
         return fines
+    
+    @staticmethod
+    def add_fine_with_status_update(reader_id, amount, reason):
+        """Добавляет штраф и автоматически блокирует читателя"""
+        conn = db.get_connection()
+        cursor = conn.cursor()
+        
+        try:
+            # Добавляем штраф
+            cursor.execute('''
+                INSERT INTO fines (reader_id, amount, reason, status)
+                VALUES (?, ?, ?, "unpaid")
+            ''', (reader_id, amount, reason))
+            
+            # Блокируем читателя
+            cursor.execute('UPDATE readers SET status = 0 WHERE reader_id = ?', 
+                          (reader_id,))
+            
+            conn.commit()
+            return True, "Штраф добавлен и читатель заблокирован"
+            
+        except Exception as e:
+            conn.rollback()
+            return False, f"Ошибка при добавлении штрафа: {e}"
+        finally:
+            conn.close()
+
+    @staticmethod
+    def update_fine_status(fine_id, new_status):
+        """Обновляет статус штрафа"""
+        conn = db.get_connection()
+        cursor = conn.cursor()
+        
+        try:
+            cursor.execute('UPDATE fines SET status = ? WHERE fine_id = ?', 
+                          (new_status, fine_id))
+            conn.commit()
+            return True, "Статус штрафа обновлен"
+            
+        except Exception as e:
+            conn.rollback()
+            return False, f"Ошибка при обновлении штрафа: {e}"
+        finally:
+            conn.close()
+
+    @staticmethod
+    def get_reader_unpaid_fines_count(reader_id):
+        """Возвращает количество неоплаченных штрафов читателя"""
+        conn = db.get_connection()
+        cursor = conn.cursor()
+        
+        cursor.execute('SELECT COUNT(*) FROM fines WHERE reader_id = ? AND status = "unpaid"', 
+                      (reader_id,))
+        count = cursor.fetchone()[0]
+        conn.close()
+        
+        return count

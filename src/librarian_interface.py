@@ -15,7 +15,7 @@ class LibrarianInterface:
     def display_header(self):
         print("=" * 50)
         print(f"БИБЛИОТЕЧНАЯ СИСТЕМА - БИБЛИОТЕКАРЬ")
-        print(f"{self.librarian.name}")
+        print(f"Пользователь: {self.librarian.name}")
         print("=" * 50)
     
     def show_menu(self):
@@ -119,8 +119,194 @@ class LibrarianInterface:
         print("\nСПИСОК ЧИТАТЕЛЕЙ:")
         for i, reader in enumerate(readers, 1):
             status = "Активен" if reader.status else "Заблокирован"
-            print(f"{i}. {reader.name} | {reader.card_number} | {status}")
+            unpaid_fines = FineDAO.get_reader_unpaid_fines_count(reader.reader_id)
+            print(f"{i}. {reader.name} | {reader.card_number} | {status} | Неоплаченных штрафов: {unpaid_fines}")
+
+        print("\nОпции:")
+        print("1. Изменить статус читателя")
+        print("2. Добавить штраф")
+        print("0. Назад")
+        
+        choice = input("\nВыберите опцию: ").strip()
+        
+        if choice == '1':
+            self.change_reader_status(readers)
+        elif choice == '2':
+            self.add_fine_to_reader(readers)
+        elif choice == '0':
+            return
+        else:
+            print("Неверный выбор!")
+
+    def change_reader_status(self, readers):
+        """Изменяет статус читателя с автоматической синхронизацией штрафов"""
+        try:
+            choice = input("\nВыберите номер читателя для изменения статуса: ").strip()
+            if not choice.isdigit():
+                print("Неверный ввод!")
+                return
+            
+            reader_index = int(choice) - 1
+            if 0 <= reader_index < len(readers):
+                selected_reader = readers[reader_index]
+                current_status = "Активен" if selected_reader.status else "Заблокирован"
+                new_status = not selected_reader.status  # Инвертируем статус
+                new_status_text = "Активен" if new_status else "Заблокирован"
+                
+                print(f"\nЧитатель: {selected_reader.name}")
+                print(f"Текущий статус: {current_status}")
+                print(f"Новый статус: {new_status_text}")
+                
+                # Проверяем неоплаченные штрафы при разблокировке
+                if new_status:  # Если разблокируем
+                    unpaid_fines = FineDAO.get_reader_unpaid_fines_count(selected_reader.reader_id)
+                    if unpaid_fines > 0:
+                        print(f"\nВНИМАНИЕ: У читателя {unpaid_fines} неоплаченных штрафов!")
+                        confirm = input("Все штрафы будут помечены как оплаченные. Продолжить? (да/нет): ").strip().lower()
+                        if confirm not in ['1', 'да', 'д', 'y', 'yes']:
+                            print("Операция отменена.")
+                            return
+                
+                confirm = input(f"\nПодтвердить изменение статуса? (да/нет): ").strip().lower()
+                if confirm in ['1', 'да', 'д', 'y', 'yes']:
+                    success, message = ReaderDAO.update_reader_status(selected_reader.reader_id, new_status)
+                    if success:
+                        print(f"Успех: {message}")
+                    else:
+                        print(f"Ошибка: {message}")
+                else:
+                    print("Операция отменена.")
+            else:
+                print("Неверный номер читателя!")
+                
+        except ValueError:
+            print("Пожалуйста, введите число!")
+        except Exception as e:
+            print(f"Ошибка: {e}")
     
+    def add_fine_to_reader(self, readers):
+        """Добавляет штраф читателю с автоматической блокировкой"""
+        try:
+            choice = input("\nВыберите номер читателя для добавления штрафа: ").strip()
+            if not choice.isdigit():
+                print("Неверный ввод!")
+                return
+            
+            reader_index = int(choice) - 1
+            if 0 <= reader_index < len(readers):
+                selected_reader = readers[reader_index]
+                
+                print(f"\nЧитатель: {selected_reader.name}")
+                amount = input("Сумма штрафа: ").strip()
+                reason = input("Причина штрафа: ").strip()
+                
+                if not amount.replace('.', '').isdigit() or float(amount) <= 0:
+                    print("Неверная сумма штрафа!")
+                    return
+                
+                if not reason:
+                    print("Причина штрафа не может быть пустой!")
+                    return
+                
+                print(f"\nСумма: {amount} руб.")
+                print(f"Причина: {reason}")
+                print("Читатель будет автоматически заблокирован при добавлении штрафа.")
+                
+                confirm = input("\nПодтвердить добавление штрафа? (да/нет): ").strip().lower()
+                if confirm in ['1', 'да', 'д', 'y', 'yes']:
+                    success, message = FineDAO.add_fine_with_status_update(
+                        selected_reader.reader_id, float(amount), reason
+                    )
+                    if success:
+                        print(f"Успех: {message}")
+                    else:
+                        print(f"Ошибка: {message}")
+                else:
+                    print("Операция отменена.")
+            else:
+                print("Неверный номер читателя!")
+                
+        except ValueError:
+            print("Пожалуйста, введите корректные данные!")
+        except Exception as e:
+            print(f"Ошибка: {e}")
+
+    def manage_fines(self):
+        """Управление штрафами"""
+        self.clear_screen()
+        self.display_header()
+        print("\nУПРАВЛЕНИЕ ШТРАФАМИ")
+        
+        fines = FineDAO.get_all_fines()
+        if not fines:
+            print("Нет штрафов в системе")
+            return
+        
+        print(f"\nВсего штрафов: {len(fines)}")
+        print("-" * 60)
+        
+        for i, fine in enumerate(fines, 1):
+            status = "ОПЛАЧЕН" if fine.status == 'paid' else "НЕ ОПЛАЧЕН"
+            print(f"{i}. Читатель: {fine.reader_name}")
+            print(f"   Сумма: {fine.amount} руб.")
+            print(f"   Причина: {fine.reason}")
+            print(f"   Статус: {status}")
+            print(f"   ID штрафа: {fine.fine_id}")
+            print()
+        
+        print("Опции:")
+        print("1. Изменить статус штрафа")
+        print("0. Назад")
+        
+        choice = input("\nВыберите опцию: ").strip()
+        
+        if choice == '1':
+            self.change_fine_status(fines)
+        elif choice == '0':
+            return
+        else:
+            print("Неверный выбор!")
+    
+    def change_fine_status(self, fines):
+        """Изменяет статус штрафа"""
+        try:
+            choice = input("\nВыберите номер штрафа для изменения статуса: ").strip()
+            if not choice.isdigit():
+                print("Неверный ввод!")
+                return
+            
+            fine_index = int(choice) - 1
+            if 0 <= fine_index < len(fines):
+                selected_fine = fines[fine_index]
+                current_status = "Оплачен" if selected_fine.status == 'paid' else "Не оплачен"
+                
+                print(f"\nШтраф: {selected_fine.amount} руб.")
+                print(f"Читатель: {selected_fine.reader_name}")
+                print(f"Причина: {selected_fine.reason}")
+                print(f"Текущий статус: {current_status}")
+                
+                new_status = "paid" if selected_fine.status == 'unpaid' else "unpaid"
+                new_status_text = "Оплачен" if new_status == 'paid' else "Не оплачен"
+                
+                print(f"Новый статус: {new_status_text}")
+                
+                confirm = input("\nПодтвердить изменение статуса? (да/нет): ").strip().lower()
+                if confirm in ['да', 'д', 'y', 'yes', '1']:
+                    success, message = FineDAO.update_fine_status(selected_fine.fine_id, new_status)
+                    if success:
+                        print(f"Успех: {message}")
+                    else:
+                        print(f"Ошибка: {message}")
+                else:
+                    print("Операция отменена.")
+            else:
+                print("Неверный номер штрафа!")
+                
+        except ValueError:
+            print("Пожалуйста, введите число!")
+        except Exception as e:
+            print(f"Ошибка: {e}")
+
     def show_all_loans(self):
         self.clear_screen()
         self.display_header()
