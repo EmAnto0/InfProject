@@ -33,7 +33,7 @@ class LibrarianInterface:
     def add_new_book(self):
         self.clear_screen()
         self.display_header()
-        print("\n📖 ДОБАВЛЕНИЕ НОВОЙ КНИГИ")
+        print("\nДОБАВЛЕНИЕ НОВОЙ КНИГИ")
         
         try:
             title = input("Название книги: ").strip()
@@ -58,21 +58,21 @@ class LibrarianInterface:
             )
             
             BookDAO.add_book(book)
-            print("✅ Книга успешно добавлена!")
+            print("Книга успешно добавлена!")
             
         except ValueError:
-            print("❌ Ошибка ввода данных!")
+            print("Ошибка ввода данных!")
         except Exception as e:
-            print(f"❌ Ошибка при добавлении книги: {e}")
+            print(f"Ошибка при добавлении книги: {e}")
     
     def show_all_books(self):
         self.clear_screen()
         self.display_header()
-        print("\n📚 ВСЕ КНИГИ В БИБЛИОТЕКЕ")
+        print("\nВСЕ КНИГИ В БИБЛИОТЕКЕ")
         
         books = BookDAO.get_all_books()
         if not books:
-            print("❌ В библиотеке пока нет книг!")
+            print("В библиотеке пока нет книг!")
             return
         
         total_books = sum(book.total_copies for book in books)
@@ -82,7 +82,7 @@ class LibrarianInterface:
         print("-" * 60)
         
         for i, book in enumerate(books, 1):
-            status = "✅" if book.available_copies > 0 else "❌"
+            status = "+" if book.available_copies > 0 else "-"
             print(f"{i}. {status} {book}")
     
     def search_books(self):
@@ -92,15 +92,15 @@ class LibrarianInterface:
         query = input("Введите название, автора или жанр: ").strip()
         
         if not query:
-            print("❌ Пустой запрос!")
+            print("Пустой запрос!")
             return
         
         books = BookDAO.search_books(query)
         if not books:
-            print("❌ Книги не найдены!")
+            print("Книги не найдены!")
             return
         
-        print(f"\n📚 Найдено книг: {len(books)}")
+        print(f"\nНайдено книг: {len(books)}")
         for i, book in enumerate(books, 1):
             print(f"{i}. {book.title} - {book.author}")
             print(f"   Жанр: {book.genre} | Доступно: {book.available_copies}/{book.total_copies}")
@@ -109,22 +109,22 @@ class LibrarianInterface:
     def manage_readers(self):
         self.clear_screen()
         self.display_header()
-        print("\n👥 УПРАВЛЕНИЕ ЧИТАТЕЛЯМИ")
+        print("\nУПРАВЛЕНИЕ ЧИТАТЕЛЯМИ")
         
         readers = ReaderDAO.get_all_readers()
         if not readers:
-            print("❌ Нет зарегистрированных читателей!")
+            print("Нет зарегистрированных читателей!")
             return
         
-        print("\n📋 СПИСОК ЧИТАТЕЛЕЙ:")
+        print("\nСПИСОК ЧИТАТЕЛЕЙ:")
         for i, reader in enumerate(readers, 1):
-            status = "✅ Активен" if reader.status else "❌ Заблокирован"
+            status = "Активен" if reader.status else "Заблокирован"
             print(f"{i}. {reader.name} | {reader.card_number} | {status}")
     
     def show_all_loans(self):
         self.clear_screen()
         self.display_header()
-        print("\n📋 ВСЕ АКТИВНЫЕ ВЫДАЧИ")
+        print("\nВСЕ АКТИВНЫЕ ВЫДАЧИ")
         
         # Здесь можно добавить логику для просмотра всех выдач
         loans = LoanDAO.get_active_loans()
@@ -202,7 +202,7 @@ class LibrarianInterface:
     def show_statistics(self):
         self.clear_screen()
         self.display_header()
-        print("\n📊 СТАТИСТИКА БИБЛИОТЕКИ")
+        print("\nСТАТИСТИКА БИБЛИОТЕКИ")
         
         # Простая статистика
         books = BookDAO.get_all_books()

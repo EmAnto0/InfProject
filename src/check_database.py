@@ -10,14 +10,14 @@ def check_all_data():
     print("=" * 50)
     
     # Проверяем структуру таблицы readers
-    print("\n📋 СТРУКТУРА ТАБЛИЦЫ READERS:")
+    print("\nСТРУКТУРА ТАБЛИЦЫ READERS:")
     cursor.execute("PRAGMA table_info(readers)")
     columns = cursor.fetchall()
     for col in columns:
         print(f"  {col[1]} ({col[2]})")
     
     # Проверяем читателей
-    print("\n📋 ЧИТАТЕЛИ:")
+    print("\nЧИТАТЕЛИ:")
     cursor.execute('SELECT reader_id, name, card_number, contact, password, status FROM readers')
     readers = cursor.fetchall()
     for reader in readers:
@@ -27,7 +27,7 @@ def check_all_data():
         print()
     
     # Проверяем библиотекарей
-    print("\n👨‍💼 БИБЛИОТЕКАРИ:")
+    print("\nБИБЛИОТЕКАРИ:")
     cursor.execute('SELECT librarian_id, name, username, password FROM librarians')
     librarians = cursor.fetchall()
     for lib in librarians:
@@ -36,7 +36,7 @@ def check_all_data():
         print()
     
     # Проверяем книги
-    print("\n📚 КНИГИ:")
+    print("\nКНИГИ:")
     cursor.execute('SELECT book_id, title, author, available_copies FROM books')
     books = cursor.fetchall()
     for book in books:

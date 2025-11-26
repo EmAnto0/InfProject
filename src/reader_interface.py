@@ -96,16 +96,16 @@ class ReaderInterface:
             if choice.isdigit() and 1 <= int(choice) <= len(reservations):
                 reservation_id = reservations[int(choice)-1].reservation_id
                 if ReservationDAO.cancel_reservation(reservation_id):
-                    print("✅ Бронирование отменено!")
+                    print("Бронирование отменено!")
     
     def show_my_fines(self):
         self.clear_screen()
         self.display_header()
-        print("\n💰 МОИ ШТРАФЫ")
+        print("\nМОИ ШТРАФЫ")
         
         fines = ReaderDAO.get_reader_fines(self.reader.reader_id)
         if not fines:
-            print("✅ У вас нет штрафов")
+            print("У вас нет штрафов")
             return
         
         total_unpaid = sum(fine.amount for fine in fines if fine.status == 'unpaid')
@@ -113,7 +113,7 @@ class ReaderInterface:
         for i, fine in enumerate(fines, 1):
             print(f"{i}. {fine}")
         
-        print(f"\n💵 Общая сумма неоплаченных штрафов: {total_unpaid} руб.")
+        print(f"\nОбщая сумма неоплаченных штрафов: {total_unpaid} руб.")
     
     def run(self):
         while True:
@@ -134,9 +134,9 @@ class ReaderInterface:
             elif choice == '5':
                 self.show_my_fines()
             elif choice == '6':
-                print("\n👋 До свидания!")
+                print("\nДо свидания!")
                 break
             else:
-                print("❌ Неверный выбор!")
+                print("Неверный выбор!")
             
             input("\nНажмите Enter для продолжения...")

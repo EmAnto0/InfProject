@@ -12,7 +12,7 @@ class AuthDAO:
         conn.close()
 
         if not row:
-            print(f"❌ Читатель с картой {card_number} не найден")
+            print(f"Читатель с картой {card_number} не найден")
             return None
             
         # Создаем объект читателя
@@ -20,10 +20,10 @@ class AuthDAO:
 
         # Сравниваем пароли ПРОСТО как строки
         if reader.password == password:
-            print(f"✅ Пароль верный для {reader.name}")
+            print(f"Пароль верный для {reader.name}")
             return reader
         else:
-            print(f"❌ Неверный пароль. Ожидалось: {reader.password}, получено: {password}")
+            print(f"Неверный пароль. Ожидалось: {reader.password}, получено: {password}")
             return None
     
     @staticmethod
@@ -35,7 +35,7 @@ class AuthDAO:
         conn.close()
 
         if not row:
-            print(f"❌ Библиотекарь с логином {username} не найден")
+            print(f"Библиотекарь с логином {username} не найден")
             return None
             
         # Создаем объект библиотекаря
@@ -43,10 +43,10 @@ class AuthDAO:
         
         # Сравниваем пароли ПРОСТО как строки
         if librarian.password == password:
-            print(f"✅ Пароль верный для {librarian.name}")
+            print(f"Пароль верный для {librarian.name}")
             return librarian
         else:
-            print(f"❌ Неверный пароль. Ожидалось: {librarian.password}, получено: {password}")
+            print(f"Неверный пароль. Ожидалось: {librarian.password}, получено: {password}")
             return None
         
 class BookDAO:
