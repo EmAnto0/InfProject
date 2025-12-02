@@ -123,9 +123,9 @@ class Database:
             INSERT INTO readers (name, card_number, contact, password, status)
             VALUES (?, ?, ?, ?, ?)
         ''', [
-            ('Иванов Иван', 'R001', 'ivanov@mail.ru', 'pass1', 1),
-            ('Петрова Мария', 'R002', 'petrova@mail.ru', 'pass2', 1),
-            ('Сидоров Алексей', 'R003', 'sidorov@mail.ru', 'pass3', 0)
+            ('Иванов Иван', '001', 'ivanov@mail.ru', '111', 1),
+            ('Петрова Мария', '002', 'petrova@mail.ru', '222', 1),
+            ('Сидоров Алексей', '003', 'sidorov@mail.ru', '333', 0)
         ])
 
         # Добавляем книги
@@ -150,8 +150,8 @@ class Database:
             INSERT INTO loans (book_id, reader_id, issue_date, due_date, status)
             VALUES (?, ?, ?, ?, ?)
         ''', [
-            (1, 1, '2024-01-10', '2024-02-10', 'active'),
-            (2, 2, '2024-01-12', '2024-02-12', 'active')
+            (1, 1, '2025-11-10', '2025-12-10', 'active'),
+            (2, 2, '2025-11-12', '2025-12-12', 'active')
         ])
         
         # Добавляем бронирования
@@ -159,8 +159,8 @@ class Database:
             INSERT INTO reservations (book_id, reader_id, reservation_date, status)
             VALUES (?, ?, ?, ?)
         ''', [
-            (3, 1, '2024-01-15', 'active'),
-            (4, 2, '2024-01-16', 'active')
+            (3, 1, '2025-11-15', 'active'),
+            (4, 2, '2025-11-16', 'active')
         ])
 
         # Добавляем штрафы
@@ -178,25 +178,3 @@ class Database:
 
 # Создаем глобальный объект базы данных
 db = Database()
-
-
-'''
-# Только если база пустая - добавляем тестовые данные
-try:
-    conn = db.get_connection()
-    cursor = conn.cursor()
-    cursor.execute("SELECT COUNT(*) FROM books")
-    book_count = cursor.fetchone()[0]
-    conn.close()
-    
-    if book_count == 0:
-        db.add_sample_data()
-        print("Тестовые данные добавлены в базу данных")
-    else:
-        print("База данных уже содержит данные")
-        
-except:
-    # Если таблиц нет - создаем и добавляем данные
-    db.add_sample_data()
-
-'''

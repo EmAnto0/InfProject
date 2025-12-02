@@ -1,4 +1,3 @@
-# reset_database.py
 import os
 
 def reset_database():
@@ -7,9 +6,9 @@ def reset_database():
         os.remove('library.db')
         print("Старая база данных удалена")
     
-    # Пересоздаем базу с новой структурой
+    # Пересоздаем базу
     from database import db
-    print("Новая база данных создана с правильной структурой")
+    print("Новая база данных создана")
 
 if __name__ == "__main__":
     reset_database()

@@ -10,9 +10,10 @@ def clear_screen():
 def main():
     while True:
         clear_screen()
-        print("=" * 50)
-        print("СИСТЕМА УЧЕТА КНИГ В БИБЛИОТЕКЕ")
-        print("=" * 50)
+        infow = "СИСТЕМА УЧЕТА КНИГ В БИБЛИОТЕКЕ"
+        print("-" * 55)
+        print("|",  " " * ((50 - len(infow)) // 2), infow, " " * ((50 - len(infow)) // 2), "|")
+        print("-" * 55)
         print("\n1. Вход для читателя")
         print("2. Вход для библиотекаря") 
         print("0. Выход")

@@ -13,10 +13,12 @@ class LibrarianInterface:
         os.system('cls' if os.name == 'nt' else 'clear')
     
     def display_header(self):
-        print("=" * 50)
-        print(f"БИБЛИОТЕЧНАЯ СИСТЕМА - БИБЛИОТЕКАРЬ")
-        print(f"Пользователь: {self.librarian.name}")
-        print("=" * 50)
+        infowl1 = "БИБЛИОТЕЧНАЯ СИСТЕМА - БИБЛИОТЕКАРЬ"
+        infowl2 = f"Пользователь: {self.librarian.name}"
+        print("-" * 55)
+        print("|", " " * ((50 - len(infowl1)) // 2), infowl1, " " * ((50 - len(infowl1)) // 2), "|")
+        print("|", " " * ((50 - len(infowl2)) // 2), infowl2, " " * ((50 - len(infowl2)) // 2), "|")
+        print("-" * 55)
     
     def show_menu(self):
         print("\nМЕНЮ БИБЛИОТЕКАРЯ:")
@@ -88,7 +90,7 @@ class LibrarianInterface:
     def search_books(self):
         self.clear_screen()
         self.display_header()
-        print("\n🔍 ПОИСК КНИГ")
+        print("\nПОИСК КНИГ")
         query = input("Введите название, автора или жанр: ").strip()
         
         if not query:

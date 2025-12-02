@@ -14,11 +14,14 @@ class ReaderInterface:
         # Проверяем актуальные задолженности
         has_unpaid_fines = ReaderDAO.has_unpaid_fines(self.reader.reader_id)
         status_text = "Активен" if not has_unpaid_fines else "Заблокирован (неоплаченные штрафы)"
-        print("=" * 50)
-        print("БИБЛИОТЕЧНАЯ СИСТЕМА - ЧИТАТЕЛЬ")
-        print(f"Пользователь: {self.reader.name} (Карта: {self.reader.card_number})")
-        print(f"Статус: {status_text}")
-        print("=" * 50)
+        infowr1 = "БИБЛИОТЕЧНАЯ СИСТЕМА - ЧИТАТЕЛЬ"
+        infowr2 = f"Пользователь: {self.reader.name} (Карта: {self.reader.card_number})"
+        infowr3 = f"Статус: {status_text}"
+        print("-" * 55)
+        print("|", " " * ((50 - len(infowr1)) // 2), infowr1, " " * ((50 - len(infowr1)) // 2), "|")
+        print("|", " " * ((50 - len(infowr2)) // 2), infowr2, " " * ((50 - len(infowr2)) // 2), "|")
+        print("|", " " * ((50 - len(infowr3)) // 2), infowr3, " " * ((50 - len(infowr3)) // 2), "|")
+        print("-" * 55)
 
     
     def show_menu(self):
@@ -105,7 +108,7 @@ class ReaderInterface:
             else:
                 print("Обратитесь к библиотекарю для решения вопроса.")
             
-            input("\nНажмите Enter для возврата в меню...")
+            #input("\nНажмите Enter для возврата в меню...")
             return
         
         print("Сначала найдем книгу для бронирования...")
