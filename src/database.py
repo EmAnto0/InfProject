@@ -114,8 +114,8 @@ class Database:
             INSERT INTO librarians (name, username, password)
             VALUES (?, ?, ?)
         ''', [
-            ('Анна Петрова', 'librarian1', '12345'),
-            ('Иван Сидоров', 'librarian2', '54321')
+            ('Анна Петрова', '01', '1111'),
+            ('Иван Сидоров', '02', '2222')
         ])
         
         # Добавляем читателей
