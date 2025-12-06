@@ -1,58 +1,71 @@
 @startuml er_diagram
 
-skinparam linetype ortho
-
-entity "Book" as Book {
-  * book_id : INTEGER <<PK>>
+entity Book {
+  *book_id : INTEGER <<PK>>
   --
   title : TEXT
   author : TEXT
   isbn : TEXT
   year : INTEGER
   publisher : TEXT
-  category : TEXT
-  count : INTEGER
+  genre : TEXT
+  description : TEXT
+  total_copies : INTEGER
+  available_copies : INTEGER
 }
 
-entity "Reader" as Reader {
-  * reader_id : INTEGER <<PK>>
+entity Reader {
+  *reader_id : INTEGER <<PK>>
   --
   name : TEXT
   card_number : TEXT
   contact : TEXT
+  password : TEXT
   status : BOOLEAN
 }
 
-entity "Librarian" as Librarian {
-  * librarian_id : INTEGER <<PK>>
+entity Librarian {
+  *librarian_id : INTEGER <<PK>>
   --
   name : TEXT
+  username : TEXT
   password : TEXT
 }
 
-entity "Reservation" as Reservation {
-  * reservation_id : INTEGER <<PK>>
-  * book_id : INTEGER <<FK>>
-  * reader_id : INTEGER <<FK>>
-  * librarian_id : INTEGER <<FK>>
+entity Loan {
+  *loan_id : INTEGER <<PK>>
   --
-  reservation_date : TEXT
-  status : BOOLEAN
+  *book_id : INTEGER <<FK>>
+  *reader_id : INTEGER <<FK>>
+  issue_date : TEXT
+  due_date : TEXT
+  return_date : TEXT
+  status : TEXT
 }
 
-entity "Fine" as Fine {
-  * fine_id : INTEGER <<PK>>
-  * reader_id : INTEGER <<FK>>
+entity Reservation {
+  *reservation_id : INTEGER <<PK>>
   --
+  *book_id : INTEGER <<FK>>
+  *reader_id : INTEGER <<FK>>
+  reservation_date : TEXT
+  status : TEXT
+}
+
+entity Fine {
+  *fine_id : INTEGER <<PK>>
+  --
+  *reader_id : INTEGER <<FK>>
   amount : REAL
   reason : TEXT
-  status : BOOLEAN
+  status : TEXT
 }
 
-' Связи между сущностями
-Reader -u-|{ Reservation
-Book -u-|{ Reservation
-Librarian -u-|{ Reservation
-Reader -u-|{ Fine
+' Связи
+Book ||--o{ Loan
+Reader ||--o{ Loan
+Book ||--o{ Reservation
+Reader ||--o{ Reservation
+Reader ||--o{ Fine
 
 @enduml

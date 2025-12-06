@@ -1,0 +1,42 @@
+@startuml project_ar
+
+package "InfProject/src" {
+  [main.py] as main
+  [reader_interface.py] as reader
+  [librarian_interface.py] as lib
+  
+  [data_access.py] as dao
+  [models.py] as models
+  [database.py] as db_module
+  
+  [export.py] as export
+  [check_database.py] as check
+}
+
+database "library.db" as db
+
+main --> reader : использует
+main --> lib : использует
+
+reader --> dao : вызывает методы
+lib --> dao : вызывает методы
+
+dao --> models : создаёт объекты
+dao --> db_module : работает с БД
+
+db_module --> db : читает/пишет
+
+export --> dao : экспортирует данные
+check --> db_module : проверяет
+
+note right of dao
+  <b>Data Access Objects:</b>
+  • AuthDAO - аутентификация
+  • BookDAO - работа с книгами
+  • ReaderDAO - читатели
+  • LoanDAO - выдачи
+  • ReservationDAO - брони
+  • FineDAO - штрафы
+end note
+
+@enduml

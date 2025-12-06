@@ -1,38 +1,59 @@
 @startuml use_case
+
 left to right direction
-skinparam packageStyle rectangle
+
+title Use Case диаграмма: Библиотечная система
 
 actor "Читатель" as Reader
 actor "Библиотекарь" as Librarian
 
-package "Библиотечная система" {
-  usecase "Поиск по каталогу" as UC1
+package "Читательские функции" {
+  usecase "Поиск книг" as UC1
   usecase "Просмотр информации о книге" as UC2
   usecase "Бронирование книги" as UC3
-  usecase "Продление срока" as UC4
-  usecase "Просмотр истории выдач" as UC5
-  usecase "Просмотр штрафов" as UC6
-  
-  usecase "Управление книгами" as UC7
-  usecase "Выдача книги" as UC8
-  usecase "Возврат книги" as UC9
-  usecase "Управление читателями" as UC10
-  usecase "Формирование отчётов" as UC11
-  usecase "Оплата штрафа" as UC12
+  usecase "Просмотр текущих выдач" as UC4
+  usecase "Просмотр штрафов" as UC5
 }
 
-Reader -- UC1
-Reader -- UC2
-Reader -- UC3
-Reader -- UC4
-Reader -- UC5
-Reader -- UC6
+package "Функции библиотекаря" {
+  usecase "Управление книгами" as UC6
+  usecase "Просмотр читателей" as UC7
+  usecase "Изменение статуса читателя" as UC8
+  usecase "Просмотр активных выдач" as UC9
+  usecase "Добавление штрафа" as UC10
+  usecase "Изменение статуса штрафа" as UC11
+  usecase "Просмотр статистики" as UC12
+  usecase "Экспорт данных" as UC13
+}
 
-Librarian -- UC7
-Librarian -- UC8
-Librarian -- UC9
-Librarian -- UC10
-Librarian -- UC11
-Librarian -- UC12
+' Связи Читателя
+Reader --> UC1
+Reader --> UC2
+Reader --> UC3
+Reader --> UC4
+Reader --> UC5
+
+' Связи Библиотекаря
+Librarian --> UC6
+Librarian --> UC7
+Librarian --> UC8
+Librarian --> UC9
+Librarian --> UC10
+Librarian --> UC11
+Librarian --> UC12
+Librarian --> UC13
+
+' Настройки отображения
+skinparam usecase {
+  BackgroundColor<< Читательские функции >> LightYellow
+  BackgroundColor<< Функции библиотекаря >> LightGreen
+  BorderColor DarkSlateGray
+}
+
+skinparam package {
+  BackgroundColor<< Читательские функции >> #FFFFCC
+  BackgroundColor<< Функции библиотекаря >> #CCFFCC
+  BorderColor DarkGray
+}
 
 @enduml
